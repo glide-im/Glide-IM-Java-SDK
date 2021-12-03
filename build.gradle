@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
 }
 
 group 'org.example'
@@ -11,13 +11,21 @@ repositories {
 }
 
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
+
     implementation 'io.netty:netty-all:4.1.70.Final'
+    implementation 'org.asynchttpclient:async-http-client:2.12.3'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation "com.squareup.moshi:moshi-kotlin:1.11.0"
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.dengzii:moshi-suite:1.0.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }
 
 test {
