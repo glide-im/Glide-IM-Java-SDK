@@ -6,27 +6,34 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.glideim.sdk.api.user.LoginDto;
 import pro.glideim.sdk.api.user.TokenBean;
 import pro.glideim.sdk.http.RetrofitManager;
+import pro.glideim.sdk.protocol.AckMessage;
+import pro.glideim.sdk.protocol.ChatMessage;
 import pro.glideim.sdk.protocol.CommMessage;
 
 class IMClientTest {
 
+    IMClient imClient = new IMClient();
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         RetrofitManager.init(new Context(), "http://localhost/api/");
+        imClient.connect("ws://localhost:8080/ws");
+        Thread.sleep(1000);
+    }
+
+    @AfterEach
+    void down() {
+        imClient.disconnect();
     }
 
     @Test
     void connect() throws InterruptedException {
-        IMClient imClient = new IMClient();
-        imClient.connect("ws://localhost:8080/ws");
-
-        Thread.sleep(1000);
-
         LoginDto d = new LoginDto("abc", "abc", 1);
         Observable<CommMessage<TokenBean>> ob = imClient.request("api.user.login", TokenBean.class, false, d);
         ob.observeOn(Schedulers.single())
@@ -51,9 +58,20 @@ class IMClientTest {
                         System.out.println("IMClientTest.onComplete");
                     }
                 });
-
         Thread.sleep(5000);
-        imClient.disconnect();
+    }
+
+    @Test
+    void sendChatMessage() {
+        ChatMessage c = new ChatMessage();
+        c.setTo(2);
+        c.setcSeq(1);
+        c.setContent("hello");
+        c.setType(1);
+        c.setMid(1234);
+        c.setcTime(System.currentTimeMillis());
+        Observable<AckMessage> o = imClient.sendChatMessage(c);
+        o.subscribe(new TestObserver<>());
     }
 
     @Test

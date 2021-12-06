@@ -3,6 +3,8 @@ package pro.glideim.sdk;
 import com.google.gson.reflect.TypeToken;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
 import io.reactivex.internal.operators.observable.ObservableSubscribeOn;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -10,6 +12,8 @@ import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.glideim.sdk.http.RetrofitManager;
+import pro.glideim.sdk.protocol.AckMessage;
+import pro.glideim.sdk.protocol.Actions;
 import pro.glideim.sdk.protocol.ChatMessage;
 import pro.glideim.sdk.protocol.CommMessage;
 import pro.glideim.sdk.ws.WsClient;
@@ -19,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class IMClient {
 
@@ -32,6 +37,8 @@ public class IMClient {
     private long uid;
 
     private final Map<Long, Emitter> requests = new HashMap<>();
+
+    private final Map<Long, ObservableEmitter<CommMessage<AckMessage>>> messages = new HashMap<>();
 
     private final Type msgType = new TypeToken<CommMessage<Object>>() {
     }.getType();
@@ -76,8 +83,16 @@ public class IMClient {
         wsClient.disconnect();
     }
 
-    public void sendMessage(long to, int type, ChatMessage message, SendMessageListener l) {
+    public Observable<AckMessage> resendMessage(ChatMessage message) {
+        return sendMessage(Actions.ACTION_MESSAGE_CHAT_RESEND, message);
+    }
 
+    public Observable<AckMessage> sendChatMessage(ChatMessage message) {
+        return sendMessage(Actions.ACTION_MESSAGE_CHAT, message);
+    }
+
+    public Observable<AckMessage> sendGroupMessage(ChatMessage message) {
+        return sendMessage(Actions.ACTION_MESSAGE_GROUP, message);
     }
 
     public <T> Observable<CommMessage<T>> request(String action, Class<T> clazz, boolean isArray, Object data) {
@@ -95,13 +110,38 @@ public class IMClient {
         }
         final Type finalT = t;
         return ObservableSubscribeOn.create(emitter -> {
-            boolean success = wsClient.sendMessage(m);
+            boolean success = send(m);
             if (!success) {
                 emitter.onError(new Exception("message send failed"));
             } else {
                 requests.put(m.getSeq(), new Emitter(emitter, finalT));
             }
         });
+    }
+
+    private Observable<AckMessage> sendMessage(String action, ChatMessage message) {
+        CommMessage<ChatMessage> c = new CommMessage<>(MESSAGE_VER, action, 0, message);
+
+        Observable<CommMessage<AckMessage>> ob = ObservableSubscribeOn.create(emitter -> {
+            boolean send = send(c);
+            if (!send) {
+                emitter.onError(new Exception("send message failed"));
+                return;
+            }
+            messages.put(message.getMid(), emitter);
+        });
+        ob = ob.timeout(10, TimeUnit.SECONDS);
+        Observable<AckMessage> flat = ob.flatMap((Function<CommMessage<AckMessage>, ObservableSource<AckMessage>>) m ->
+                Observable.just(m.getData())
+        ).doOnNext(ackMessage -> {
+            messages.remove(ackMessage.getMid());
+        });
+        return flat;
+    }
+
+    private boolean send(Object obj) {
+        wsClient.sendMessage(obj);
+        return true;
     }
 
     private void onMessage(String t) {
@@ -128,10 +168,6 @@ public class IMClient {
             emitter.e.onError(new Exception(m.getData().toString()));
         }
         emitter.e.onComplete();
-    }
-
-    public interface SendMessageListener {
-        void complete(boolean success, String message);
     }
 
     private final WebSocketListener webSocketListener = new WebSocketListener() {

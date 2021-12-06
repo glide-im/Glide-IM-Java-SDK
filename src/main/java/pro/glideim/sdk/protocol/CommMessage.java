@@ -6,6 +6,10 @@ public class CommMessage<T> {
     private long seq;
     private T data;
 
+    public static <T> CommMessage<T> create(int ver, String action, long seq, T data) {
+        return new CommMessage<>(ver, action, seq, data);
+    }
+
     public CommMessage(int ver, String action, long seq, T data) {
         this.ver = ver;
         this.action = action;
