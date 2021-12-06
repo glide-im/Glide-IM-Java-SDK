@@ -1,15 +1,23 @@
 package pro.glideim.sdk.ws;
 
+import android.content.Context;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pro.glideim.sdk.protocol.CommMessage;
+import pro.glideim.sdk.api.user.LoginDto;
+import pro.glideim.sdk.http.RetrofitManager;
 
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class WsClientTest {
 
+    @BeforeEach
+    void setUp() {
+        RetrofitManager.init(new Context(), "http://localhost:8081/api/");
+    }
+
     @Test
-    void connect() {
+    void connect() throws InterruptedException {
         WsClient c = new WsClient();
         try {
             c.connect("ws://localhost:8080/ws");
@@ -17,6 +25,7 @@ class WsClientTest {
             e.printStackTrace();
         }
 
-        c.send();
+        c.sendMessage(new CommMessage(1, "api.user.login", 1, new LoginDto("abc", "abc", 1)));
+        Thread.sleep(5000);
     }
 }

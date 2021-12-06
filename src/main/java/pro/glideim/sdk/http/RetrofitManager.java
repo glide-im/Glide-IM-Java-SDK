@@ -5,8 +5,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
+import okhttp3.*;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -17,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RetrofitManager {
     private Retrofit retrofit;
+    private OkHttpClient httpClient;
     private Gson gson;
 
     private static RetrofitManager sInstance;
@@ -53,8 +53,9 @@ public class RetrofitManager {
         if (cacheDir != null) {
             httpClient.cache(new Cache(cacheDir, 1024 * 1024 * 10));
         }
+        m.httpClient = httpClient.build();
         m.retrofit = new Retrofit.Builder()
-                .client(httpClient.build())
+                .client(m.httpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(m.gson))
                 .baseUrl(baseUrl)
@@ -62,4 +63,8 @@ public class RetrofitManager {
         sInstance = m;
     }
 
+    public static WebSocket newWebSocket(String url, WebSocketListener l) {
+        Request request = new Request.Builder().get().url(url).build();
+        return sInstance.httpClient.newWebSocket(request, l);
+    }
 }
