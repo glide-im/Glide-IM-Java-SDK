@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.glideim.sdk.http.RetrofitManager;
 
+import java.io.EOFException;
 import java.util.concurrent.ExecutionException;
 
 public class WsClient {
@@ -23,13 +24,13 @@ public class WsClient {
         ws = RetrofitManager.newWebSocket(url, new WebSocketListenerProxy());
     }
 
-    public void disconnect(){
+    public void disconnect() {
         ws.close(1000, "");
     }
 
     public boolean sendMessage(Object obj) {
         String json = RetrofitManager.toJson(obj);
-        System.out.println("WsClient.sendMessage:"+json);
+        System.out.println("WsClient.sendMessage:" + json);
         return this.ws.send(json);
     }
 
@@ -53,6 +54,11 @@ public class WsClient {
 
         @Override
         public void onFailure(@NotNull WebSocket webSocket, @NotNull Throwable t, @Nullable Response response) {
+            if (t instanceof EOFException) {
+                onClosed(webSocket, -1, "EOF, closed");
+                return;
+            }
+
             System.out.println("WsClient.onFailure " + t.getMessage());
             if (listener != null) {
                 listener.onFailure(webSocket, t, response);

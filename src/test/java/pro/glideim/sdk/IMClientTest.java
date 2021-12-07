@@ -62,16 +62,17 @@ class IMClientTest {
     }
 
     @Test
-    void sendChatMessage() {
+    void sendChatMessage() throws InterruptedException {
         ChatMessage c = new ChatMessage();
-        c.setTo(2);
+        c.setTo(543619);
         c.setcSeq(1);
         c.setContent("hello");
         c.setType(1);
-        c.setMid(1234);
+        c.setMid(12343);
         c.setcTime(System.currentTimeMillis());
         Observable<AckMessage> o = imClient.sendChatMessage(c);
         o.subscribe(new TestObserver<>());
+        Thread.sleep(4000);
     }
 
     @Test

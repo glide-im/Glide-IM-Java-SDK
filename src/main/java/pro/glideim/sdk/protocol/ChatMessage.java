@@ -3,10 +3,19 @@ package pro.glideim.sdk.protocol;
 public class ChatMessage {
     private long mid;
     private long cSeq;
+    private long from;
     private long to;
     private int type;
     private String content;
     private long cTime;
+
+    public long getFrom() {
+        return from;
+    }
+
+    public void setFrom(long from) {
+        this.from = from;
+    }
 
     public long getMid() {
         return mid;
