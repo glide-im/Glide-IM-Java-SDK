@@ -1,6 +1,5 @@
 package pro.glideim.sdk;
 
-import android.content.Context;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -22,7 +21,7 @@ class IMClientTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        RetrofitManager.init(new Context(), "http://localhost/api/");
+        RetrofitManager.init("http://localhost/api/");
         imClient.connect("ws://localhost:8080/ws");
         Thread.sleep(1000);
     }

@@ -12,24 +12,24 @@ public interface UserApi {
 
     UserApi API = RetrofitManager.create(UserApi.class);
 
-    @POST("/contacts/list")
+    @POST("contacts/list")
     Observable<Response<List<ContactsBean>>> getContactsList();
 
-    @POST("/contacts/add")
+    @POST("contacts/add")
     Observable<Response<Object>> addContacts(@Body ContactsUidDto d);
 
-    @POST("/contacts/del")
+    @POST("contacts/del")
     Observable<Response<Object>> delContacts(@Body ContactsUidDto d);
 
-    @POST("/contacts/approval")
+    @POST("contacts/approval")
     Observable<Response<Object>> contactsApproval(@Body ApprovalContactsDto d);
 
-    @POST("/user/info")
+    @POST("user/info")
     Observable<Response<List<UserInfoBean>>> getUserInfo(@Body GetUserInfoDto d);
 
-    @POST("/user/profile")
+    @POST("user/profile")
     Observable<Response<ProfileBean>> myProfile();
 
-    @POST("/user/profile/update")
+    @POST("user/profile/update")
     Observable<Response<Object>> updateMyProfile();
 }

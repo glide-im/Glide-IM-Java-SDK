@@ -1,6 +1,5 @@
 package pro.glideim.sdk;
 
-import android.content.Context;
 import pro.glideim.sdk.http.RetrofitManager;
 
 public class GlideIM {
@@ -11,8 +10,8 @@ public class GlideIM {
         static GlideIM INSTANCE = new GlideIM();
     }
 
-    public static void init(Context context, String urlWs, String urlApi) {
-        RetrofitManager.init(context, urlApi);
+    public static void init(String urlWs, String urlApi) {
+        RetrofitManager.init(urlApi);
         Holder.INSTANCE.conn.connect(urlWs);
     }
 }

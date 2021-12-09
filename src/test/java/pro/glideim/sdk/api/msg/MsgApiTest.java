@@ -1,6 +1,5 @@
 package pro.glideim.sdk.api.msg;
 
-import android.content.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.glideim.sdk.TestObserver;
@@ -12,7 +11,7 @@ class MsgApiTest {
 
     @BeforeEach
     void setUp() {
-        RetrofitManager.init(new Context(), "http://localhost:8081/api/");
+        RetrofitManager.init("http://localhost:8081/api/");
     }
 
     @Test

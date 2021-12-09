@@ -1,6 +1,5 @@
 package pro.glideim.sdk;
 
-import android.content.Context;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -24,7 +23,7 @@ public class MockUserTest {
     @BeforeEach
     void setup() throws InterruptedException {
 
-        RetrofitManager.init(new Context(), "http://localhost:8081/api/");
+        RetrofitManager.init("http://localhost:8081/api/");
         imClient.connect("ws://localhost:8080/ws");
         imClient.setMessageListener(m -> {
             System.out.println("On Receive Message ===>>> " + RetrofitManager.toJson(m));

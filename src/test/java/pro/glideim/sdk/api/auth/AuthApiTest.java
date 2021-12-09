@@ -1,16 +1,15 @@
 package pro.glideim.sdk.api.auth;
 
-import android.content.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.glideim.sdk.TestObserver;
 import pro.glideim.sdk.http.RetrofitManager;
 
-class UserApiTest {
+class AuthApiTest {
 
     @BeforeEach
     void tearDown() {
-        RetrofitManager.init(new Context(), "http://localhost:8081/api/");
+        RetrofitManager.init("http://localhost:8081/api/");
     }
 
     @Test

@@ -1,16 +1,17 @@
 package pro.glideim.sdk.http;
 
-import android.content.Context;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
@@ -33,10 +34,10 @@ public class RetrofitManager {
         return sInstance.gson.fromJson(json, t);
     }
 
-    public static void init(Context context, String baseUrl) {
+    public static void init(String baseUrl) {
 
         RetrofitManager m = new RetrofitManager();
-        File cacheDir = context.getExternalCacheDir();
+//        File cacheDir = context.getExternalCacheDir();
         m.gson = new GsonBuilder()
                 .setLenient()
                 .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
@@ -50,9 +51,9 @@ public class RetrofitManager {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .hostnameVerifier((hostname, session) -> true);
 
-        if (cacheDir != null) {
-            httpClient.cache(new Cache(cacheDir, 1024 * 1024 * 10));
-        }
+//        if (cacheDir != null) {
+//            httpClient.cache(new Cache(cacheDir, 1024 * 1024 * 10));
+//        }
         m.httpClient = httpClient.build();
         m.retrofit = new Retrofit.Builder()
                 .client(m.httpClient)
