@@ -1,4 +1,4 @@
-package pro.glideim.sdk.api.user;
+package pro.glideim.sdk.api.auth;
 
 import android.content.Context;
 import org.junit.jupiter.api.BeforeEach;

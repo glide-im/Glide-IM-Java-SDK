@@ -1,4 +1,4 @@
-package pro.glideim.sdk.api.user;
+package pro.glideim.sdk.api.auth;
 
 public class RegisterDto {
     private String account;

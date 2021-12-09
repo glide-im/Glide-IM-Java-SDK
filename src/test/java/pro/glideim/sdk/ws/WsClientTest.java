@@ -4,7 +4,7 @@ import android.content.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.glideim.sdk.protocol.CommMessage;
-import pro.glideim.sdk.api.user.LoginDto;
+import pro.glideim.sdk.api.auth.LoginDto;
 import pro.glideim.sdk.http.RetrofitManager;
 
 import java.util.concurrent.ExecutionException;
