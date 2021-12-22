@@ -9,20 +9,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pro.glideim.sdk.api.auth.LoginDto;
-import pro.glideim.sdk.api.auth.TokenBean;
+import pro.glideim.sdk.api.auth.AuthBean;
 import pro.glideim.sdk.http.RetrofitManager;
-import pro.glideim.sdk.protocol.AckMessage;
 import pro.glideim.sdk.protocol.ChatMessage;
 import pro.glideim.sdk.protocol.CommMessage;
+import pro.glideim.sdk.im.IMClientImpl;
 
 class IMClientTest {
 
-    IMClient imClient = new IMClient();
+    IMClientImpl imClient = IMClientImpl.create();
 
     @BeforeEach
     void setUp() throws InterruptedException {
         RetrofitManager.init("http://localhost/api/");
-        imClient.connect("ws://localhost:8080/ws");
+        Boolean aBoolean = imClient.connect("ws://localhost:8080/ws").blockingGet();
         Thread.sleep(1000);
     }
 
@@ -34,16 +34,16 @@ class IMClientTest {
     @Test
     void connect() throws InterruptedException {
         LoginDto d = new LoginDto("abc", "abc", 1);
-        Observable<CommMessage<TokenBean>> ob = imClient.request("api.user.login", TokenBean.class, false, d);
+        Observable<CommMessage<AuthBean>> ob = imClient.request("api.user.login", AuthBean.class, false, d);
         ob.observeOn(Schedulers.single())
-                .subscribe(new Observer<CommMessage<TokenBean>>() {
+                .subscribe(new Observer<CommMessage<AuthBean>>() {
                     @Override
                     public void onSubscribe(@NotNull Disposable d) {
                         System.out.println("IMClientTest.onSubscribe");
                     }
 
                     @Override
-                    public void onNext(@NotNull CommMessage<TokenBean> tokenBean) {
+                    public void onNext(@NotNull CommMessage<AuthBean> tokenBean) {
                         System.out.println("IMClientTest.onNext\t" + tokenBean);
                     }
 
@@ -69,7 +69,7 @@ class IMClientTest {
         c.setType(1);
         c.setMid(12343);
         c.setcTime(System.currentTimeMillis());
-        Observable<AckMessage> o = imClient.sendChatMessage(c);
+        Observable<ChatMessage> o = imClient.sendChatMessage(c);
         o.subscribe(new TestObserver<>());
         Thread.sleep(4000);
     }

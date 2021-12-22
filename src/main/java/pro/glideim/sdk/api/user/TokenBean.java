@@ -1,4 +1,4 @@
-package pro.glideim.sdk.api.auth;
+package pro.glideim.sdk.api.user;
 
 public class TokenBean {
     private String token;
