@@ -4,24 +4,23 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+
+import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okhttp3.logging.HttpLoggingInterceptor;
+import pro.glideim.sdk.utils.SLogger;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.lang.reflect.Type;
-import java.util.concurrent.TimeUnit;
-
 public class RetrofitManager {
-    private static final HttpLoggingInterceptor sLoggerInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-        @Override
-        public void log(String message) {
-            System.out.println("RetrofitManager.log: " + message);
-        }
+    private static final HttpLoggingInterceptor sLoggerInterceptor = new HttpLoggingInterceptor(message -> {
+        SLogger.d(RetrofitManager.class.getSimpleName(), message);
     });
     private static RetrofitManager sInstance;
     private Retrofit retrofit;
@@ -51,7 +50,7 @@ public class RetrofitManager {
                 .serializeNulls()
                 .create();
 
-        sLoggerInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        sLoggerInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)

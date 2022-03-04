@@ -1,11 +1,32 @@
 package pro.glideim.sdk.api.msg;
 
 public class GroupMessageBean {
+
     private long mid;
     private long sender;
     private long gid;
     private int type;
     private long seq;
+    private long sendAt;
+    private String content;
+    private int status;
+    private long recallBy;
+
+    public long getRecallBy() {
+        return recallBy;
+    }
+
+    public void setRecallBy(long recallBy) {
+        this.recallBy = recallBy;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public long getSeq() {
         return seq;
@@ -14,9 +35,6 @@ public class GroupMessageBean {
     public void setSeq(long seq) {
         this.seq = seq;
     }
-
-    private long sentAt;
-    private String content;
 
     public long getMid() {
         return mid;
@@ -50,12 +68,12 @@ public class GroupMessageBean {
         this.type = type;
     }
 
-    public long getSentAt() {
-        return sentAt;
+    public long getSendAt() {
+        return sendAt;
     }
 
-    public void setSentAt(long sentAt) {
-        this.sentAt = sentAt;
+    public void setSendAt(long sendAt) {
+        this.sendAt = sendAt;
     }
 
     public String getContent() {
